@@ -18,6 +18,7 @@
  *          @property  intlen               : this will holds the number of digits of Integer part
  *          @property signNum               : this will holds the sign of our BigNumber
  */
+
 struct bnstruct{
     char intNum[MaxInt+1];
     char floatNum[MaxFloat+1];
@@ -27,8 +28,45 @@ struct bnstruct{
 };
 
 
-
 typedef struct bnstruct bn;
+
+/*
+ * ============================================================
+ */
+
+
+struct splittedNum{
+    bn first;
+    bn second;
+    unsigned int shift;
+};
+typedef struct splittedNum splittedNum_;
+
+struct dlt{
+    bn div;
+    unsigned long mod;
+};
+typedef struct dlt divLongTuple;
+
+
+struct dit{
+    unsigned int div;
+    unsigned int mod;
+};
+typedef struct dit divIntTuple;
+
+
+
+struct dbnt{
+    bn div;
+    bn mod;
+};
+
+typedef struct dbnt divBNTuple;
+
+/*
+ * ===========================================================
+ */
 
 void fillZ(bn*);
 
@@ -46,12 +84,14 @@ void uimul(bn,bn,bn*);
 void uadd(bn,bn,bn*);
 void usub(bn,bn,bn*);
 void umul(bn,bn,bn*);
+void udiv(bn,bn,divBNTuple*);
 
 
 //Signed Arithmetic operations
 void add(bn,bn,bn*);
 void sub(bn,bn,bn*);
 void mul(bn,bn,bn*);
+void div_(bn,bn,divBNTuple*);
 
 void times10(bn*);
 void div10(bn*);

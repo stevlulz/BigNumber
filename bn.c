@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "bn.h"
 #include "stdio.h"
-#include "helper.h"
+#include <stdbool.h>
 void fillZ(bn*num){
     num->intlen = 1;
     for (int k = 0; k <MaxInt ; ++k)num->intNum[k] = '0';
@@ -192,6 +192,9 @@ static bool isZer(bn num){
     }
     return false;
 }
+static bool __isLong(bn num2_){
+    return num2_.intlen <=LONGMAX;
+}
 static void __cpy_BN(bn num_,bn* dest){
     dest->floatNum[MaxFloat] = '\x00';
     dest->intNum[MaxInt]='\x00';
@@ -299,6 +302,22 @@ static void __setSignBn(bn* num,bool sign){
     num->signNum = sign;
 }
 
+static void __simple_int_div(bn num1_,bn num2_,divIntTuple* res){
+    if(num1_.intlen <=MUMALLOW && num2_.intlen <= MUMALLOW) {
+        unsigned int num1 = toUInt(num1_);
+        unsigned int num2 = toUInt(num2_);
+        if(num2 !=0){
+            res->div = num1/num2;
+            res->mod = num1%num2;
+            return;
+        }
+        else{
+            perror("[!] Simple division can't be done cause of ZeroDivision\n");
+        }
+    }
+    perror("[!] Simple division can't be done cause of args's length\n");
+    exit(1);
+}//TODO SEE =================!
 static void __simple_int_mul(bn num1_,bn num2_,bn*res){
     if(num1_.intlen <=MUMALLOW && num2_.intlen <= MUMALLOW){
         unsigned int num1 = toUInt(num1_);
@@ -308,6 +327,7 @@ static void __simple_int_mul(bn num1_,bn num2_,bn*res){
         return;
     }
     perror("[!] Simple multiplication can't be done cause of args's length\n");
+    exit(1);
 }
 static void __mul_by_10(bn* num1){
     if(num1->intlen == MaxInt)perror("[!] Multiplication10 cannot be done cause of overFlow \n"),exit(1);
@@ -354,6 +374,19 @@ static void __mul_by_pow10(bn* num_,int sh){
 }
 static void __div_by_pow10(bn* num_,int sh){
     __mul_by_pow10(num_,-sh);
+}
+static void __udiv_BN_Long(bn num_,unsigned long div,divLongTuple*res){
+    unsigned long rem = 0;
+    char result[DIV];
+    for(int indx=MaxInt-num_.intlen, len = MaxInt; indx<len; ++indx)
+    {
+        rem = (rem * 10) + (num_.intNum[indx] - '0');
+        result[indx] = (char) (rem / div + '0');
+        rem %= div;
+    }
+    res->mod =rem;
+    parseStrToBN(&res->div,result);
+    print_BN(res->div);
 }
 
 static void __unsigned_addition(bn num1_,bn num2_,bn*res){
@@ -518,6 +551,43 @@ static void __unsigned_multiplication(bn num1_,bn num2_,bn*res ){
     __unsigned_addition(res1,res2,res);
 }
 
+static void __unsigned_int_division(bn num1_,bn num2_,divBNTuple* res){//TODO===================
+    fillZ(&res->mod);
+    fillZ(&res->div);
+    if(isZer(num2_))perror("[!] Division by zero cannot be done\n"),exit(1);
+    if(__u_greater(num2_,num1_)){
+        cpy(num2_,&res->div);
+        return;
+    }
+    if(__is_simple_num(num1_)&&__is_simple_num(num2_)&&!isZer(num1_)){
+        divIntTuple r;
+        __simple_int_div(num1_, num2_, &r);
+        __uint_to_BG(r.mod, &res->mod);
+        __uint_to_BG(r.div, &res->div);
+    }
+    else if(__isLong(num2_)){
+        divLongTuple s;
+        __udiv_BN_Long(num1_,toULong(num2_),&s);
+      //  printf("Mod : %ld\n",s.mod);
+        //printf("Div : %s\n",s.div);
+    }
+    else if(isZer(num1_)){
+        __cpy_BN(num1_,&res->mod);
+        return;
+    }
+    else{
+        perror("[!] Ops sorry division can't be done\n");
+        exit(9);
+    }
+
+
+}
+static void __unsigned_division(bn num1_,bn num2_,divBNTuple* res){
+    __unsigned_int_division(num1_,num2_,res);
+    res->mod.intlen = cal_Len(res->mod);
+    res->div.intlen = cal_Len(res->div);
+}
+
 
 
 
@@ -585,6 +655,22 @@ static void __multiplication(bn num1_,bn num2_,bn*res){
     __unsigned_multiplication(num1_,num2_,res);
     res->signNum = (num2_.signNum != num1_.signNum);
 }
+static void __division(bn num1_,bn num2_,divBNTuple* res){
+    if(num1_.signNum == num2_.signNum){
+        __unsigned_division(num1_,num2_,res);
+        res->div.signNum =false;
+        res->mod.signNum = false;
+
+        return;
+    }
+    else{
+
+
+    }
+
+}
+
+
 
 
 void times10(bn*num_){
@@ -652,7 +738,11 @@ void usub(bn _num1,bn _num2,bn* res){
 void umul(bn num1_,bn num2_,bn*res){
     __unsigned_multiplication(num1_,num2_,res);
 }
+void udiv(bn num1_,bn num2_,divBNTuple* res){
 
+    __unsigned_division(num1_,num2_,res);
+
+}//TODO==================================!
 
 
 /**
@@ -693,6 +783,8 @@ void sub(bn num1_,bn num2_,bn* res){
 void mul(bn num1_,bn num2_,bn* res){
     __multiplication(num1_,num2_,res);
 }
+
+void div_(bn num1_,bn num2_,divBNTuple* res){}//TODO==============================!
 
 /**
  * @interface compare

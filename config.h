@@ -18,7 +18,7 @@
 #define MUMALLOW 5
 #define SIMPLENUM 5
 
-
+#define DIV 20
 #define MAX(x,y) (x>y)?x:y
 #define MIN(x,y) (x<y)?x:y
 
