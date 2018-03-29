@@ -18,7 +18,7 @@
 
 
 /**
- * @authors {Seyyidahmed Lahmer}
+ * @authors {Kheroubi Elaid-Derouiwech-brahim,Seyyidahmed Lahmer}
  * @date 2018
  * @file bn.h
  *
