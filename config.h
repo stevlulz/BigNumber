@@ -7,8 +7,8 @@
 
 #define BASE 10
 
-#define MaxInt 20
-#define MaxFloat 20
+#define MaxInt 100
+#define MaxFloat 30
 
 #define UINTMAX 8
 #define LONGMAX 9

@@ -3,4 +3,4 @@ project(op C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(op main.c config.h bn.c bn.h helper.h)
+add_executable(op main.c config.h bn.c bn.h helper.h helper.c)

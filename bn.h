@@ -18,7 +18,7 @@
 
 
 /**
- * @authors {Kheroubi Elaid-Derouiwech-brahim,Seyyidahmed Lahmer}
+ * @authors {Seyyidahmed Lahmer}
  * @date 2018
  * @file bn.h
  *
@@ -29,6 +29,7 @@
 
 #include <stdbool.h>
 #include "config.h"
+#include "helper.h"
 
 /**
  * @struct bnstruct
@@ -210,4 +211,5 @@ void toBN(bn *num,const int num1);
 void split(bn num);
 void floatP(bn);
 
+void bc_divide(bn,bn,bn*);
 #endif //OP_BN_H

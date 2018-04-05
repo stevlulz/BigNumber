@@ -5,6 +5,7 @@
 #include "bn.h"
 #include "stdio.h"
 #include <stdbool.h>
+#include "helper.h"
 void fillZ(bn*num){
     num->intlen = 1;
     for (int k = 0; k <MaxInt ; ++k)num->intNum[k] = '0';
@@ -206,7 +207,11 @@ static void __cpy_BN(bn num_,bn* dest){
         dest->floatNum[j] = num_.floatNum[j];
     }
 }
-
+static bool __is_F_Zero(bn num_){
+    for (int i = 0; i <MaxFloat ; ++i)
+        if(num_.floatNum[i] != '0')return false;
+    return true;
+}
 static void __split_BN(bn num_,struct splittedNum* res){
     fillZ(&res->first);
     fillZ(&res->second);
@@ -890,3 +895,46 @@ void floatP(bn num){
     __float_part_to_bn(num,&n);
     print_BN(n);
 }
+
+
+
+
+
+
+
+/*
+ * Start======================================================================
+ */
+
+
+
+void bc_divide(bn n1,bn n2,bn* quot){
+    bn qval;
+    /* Test for divide by zero. */
+    if(isZer(n2)){
+        perror("Division By zero\n");
+        exit(1);
+    }
+    /* Test for divide by 1.  If it is we must truncate. */
+
+    if(__is_F_Zero(n2)){
+        if(n2.intlen == 1 && n2.intNum[MaxInt-1] == '1'){
+            qval.signNum = (n1.signNum == n2.signNum)?false:true;
+            cpy(n1,quot);
+            return;
+        }
+    }
+    bc_num num1,num2,res;
+    quot->signNum = (n1.signNum == n2.signNum)?false:true;
+
+    bc_str2num(&num1,n1.intNum,MaxFloat);
+    bc_str2num(&num2,n2.intNum,MaxFloat);
+    bcdivide(num1,num2,&res,MaxFloat);
+    parseStrToBN(quot,num2str(res));
+
+}
+
+
+/*
+ * Ending
+ */
