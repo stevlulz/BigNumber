@@ -96,7 +96,7 @@ static long start(){
     long start = getMicrotime();
     calculate();
     long fin = getMicrotime();
-    // printf("Time elapsed : %ld\n",fin-start);
+   // printf("Time elapsed : %ld\n",fin-start);
     return  fin-start;
 
 }
@@ -144,14 +144,14 @@ void calculate(){
 
     // a = (s*part1-(part2*part3))/(s*part4-part5);
 
-    umul(part2,part3,&tmp);
-    sub(part1,tmp,&tmp);
+      umul(part2,part3,&tmp);
+      sub(part1,tmp,&tmp);
 
-    sub(part4,part5,&tmp2);
+     sub(part4,part5,&tmp2);
 
 
     // a =
-    bc_divide(tmp,tmp2,&a);
+            bc_divide(tmp,tmp2,&a);
 
 
     // b = (part4-a*part3)/s
@@ -159,7 +159,7 @@ void calculate(){
     umul(a,part3,&tmp);
     sub(part4,tmp,&tmp);
     // b =
-    bc_divide(tmp,s,&b);
+            bc_divide(tmp,s,&b);
 
     //print_BN()
 

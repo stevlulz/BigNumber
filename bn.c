@@ -3,9 +3,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include "bn.h"
-#include "stdio.h"
-#include <stdbool.h>
-#include "helper.h"
 void fillZ(bn*num){
     num->intlen = 1;
     for (int k = 0; k <MaxInt ; ++k)num->intNum[k] = '0';
